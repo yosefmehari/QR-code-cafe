@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Cafe Ordering</title>
+    <meta
+      name="description"
+      content="A modern QR-based cafe ordering experience for customers, kitchen staff, and admins."
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="brand-mark">☕</div>
+        <div>
+          <p class="eyebrow">QR TABLE ORDERING</p>
+          <h1>North Star Cafe</h1>
+        </div>
+      </div>
+      <nav class="nav-pills" aria-label="Primary">
+        <button class="nav-pill active" data-view="customer">Customer</button>
+        <button class="nav-pill" data-view="kitchen">Kitchen</button>
+        <button class="nav-pill" data-view="waiter">Waiter</button>
+        <button class="nav-pill" data-view="admin">Admin</button>
+      </nav>
+    </header>
+
+    <main class="shell">
+      <section id="customerView" class="view active">
+        <div class="hero card">
+          <div>
+            <p class="eyebrow">Mobile-first ordering</p>
+            <h2>Scan, browse, and send your order in minutes.</h2>
+            <p>
+              Every table has a unique QR code. Scan it, choose your favorites,
+              and the kitchen receives the order instantly.
+            </p>
+          </div>
+          <div class="hero-panel">
+            <label class="field-label" for="tableSelect">Table</label>
+            <select id="tableSelect"></select>
+            <div id="tableSummary" class="muted"></div>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <section class="menu-section">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Menu</p>
+                <h3>Today's favorites</h3>
+              </div>
+              <div id="categoryChips" class="chip-row"></div>
+            </div>
+            <div id="menuGrid" class="menu-grid"></div>
+          </section>
+
+          <aside class="cart-panel">
+            <div class="card order-card">
+              <div class="section-head compact">
+                <div>
+                  <p class="eyebrow">Your cart</p>
+                  <h3>Order summary</h3>
+                </div>
+              </div>
+              <div id="cartItems"></div>
+              <div id="checkoutFormContainer"></div>
+              <div id="customerStatus" class="status-card"></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="kitchenView" class="view">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Kitchen dashboard</p>
+            <h3>Live orders</h3>
+          </div>
+          <div class="pill">Real-time updates</div>
+        </div>
+        <div id="kitchenBoard" class="kitchen-board"></div>
+      </section>
+
+      <section id="waiterView" class="view">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Waiter dashboard</p>
+            <h3>Orders ready for delivery</h3>
+          </div>
+          <div class="pill">Deliver to table</div>
+        </div>
+        <div id="waiterBoard" class="kitchen-board"></div>
+      </section>
+
+      <section id="adminView" class="view">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Admin dashboard</p>
+            <h3>Tables, menu, and QR codes</h3>
+          </div>
+        </div>
+
+        <div class="admin-grid">
+          <div class="card">
+            <div class="section-head compact">
+              <div>
+                <p class="eyebrow">Tables</p>
+                <h3>Table management</h3>
+              </div>
+            </div>
+            <form id="tableForm" class="stack">
+              <input type="hidden" id="tableId" />
+              <label>
+                Table name
+                <input id="tableName" required placeholder="Table 12" />
+              </label>
+              <label>
+                Table number
+                <input
+                  id="tableNumber"
+                  type="number"
+                  min="1"
+                  required
+                  placeholder="12"
+                />
+              </label>
+              <label class="checkbox-row">
+                <input id="tableActive" type="checkbox" checked />
+                <span>Active</span>
+              </label>
+              <div class="inline-actions">
+                <button class="btn btn-primary" type="submit">
+                  Save table
+                </button>
+                <button
+                  class="btn btn-secondary"
+                  type="button"
+                  id="cancelTableEdit"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+            <div id="tableList" class="stack"></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head compact">
+              <div>
+                <p class="eyebrow">Menu</p>
+                <h3>Menu item management</h3>
+              </div>
+            </div>
+            <form id="menuForm" class="stack">
+              <input type="hidden" id="menuItemId" />
+              <label>
+                Name
+                <input id="menuName" required placeholder="Chicken Burger" />
+              </label>
+              <label>
+                Category
+                <select id="menuCategory"></select>
+              </label>
+              <label>
+                Price
+                <input
+                  id="menuPrice"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  required
+                  placeholder="14.50"
+                />
+              </label>
+              <label>
+                Description
+                <textarea
+                  id="menuDescription"
+                  rows="3"
+                  placeholder="Describe the dish"
+                ></textarea>
+              </label>
+              <label>
+                Image URL
+                <input id="menuImage" placeholder="https://..." />
+              </label>
+              <label class="checkbox-row">
+                <input id="menuAvailable" type="checkbox" checked />
+                <span>Available</span>
+              </label>
+              <div class="inline-actions">
+                <button class="btn btn-primary" type="submit">Save item</button>
+                <button
+                  class="btn btn-secondary"
+                  type="button"
+                  id="cancelMenuEdit"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+            <div id="menuAdminList" class="stack"></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head compact">
+              <div>
+                <p class="eyebrow">Categories</p>
+                <h3>Category setup</h3>
+              </div>
+            </div>
+            <form id="categoryForm" class="stack">
+              <input type="hidden" id="categoryId" />
+              <label>
+                Category name
+                <input id="categoryName" required placeholder="Breakfast" />
+              </label>
+              <div class="inline-actions">
+                <button class="btn btn-primary" type="submit">
+                  Save category
+                </button>
+                <button
+                  class="btn btn-secondary"
+                  type="button"
+                  id="cancelCategoryEdit"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+            <div id="categoryList" class="stack"></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head compact">
+              <div>
+                <p class="eyebrow">QR codes</p>
+                <h3>Printable table codes</h3>
+              </div>
+            </div>
+            <label>
+              Choose table
+              <select id="qrTableSelect"></select>
+            </label>
+            <div class="inline-actions">
+              <button class="btn btn-primary" type="button" id="generateQrBtn">
+                Generate QR
+              </button>
+            </div>
+            <div id="qrPreview" class="qr-preview"></div>
+            <div class="inline-actions">
+              <button
+                class="btn btn-secondary"
+                type="button"
+                id="downloadSvgBtn"
+              >
+                Download SVG
+              </button>
+              <button
+                class="btn btn-secondary"
+                type="button"
+                id="downloadPngBtn"
+              >
+                Download PNG
+              </button>
+              <button class="btn btn-secondary" type="button" id="printQrBtn">
+                Print
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.0/build/qrcode.min.js"></script>
+    <script src="js.js"></script>
+  </body>
+</html>
